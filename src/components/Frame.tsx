@@ -139,27 +139,32 @@ export default function Frame(
     }
   }, [isSDKLoaded]);
 
-  const addFrame = useCallback(async () => {
-    try {
-      const result = await sdk.actions.addFrame();
+  const handleAddFrameResult = useCallback((result: any) => {
+    setAddFrameResult(
+      result.notificationDetails
+        ? `Added, got notificaton token ${result.notificationDetails.token} and url ${result.notificationDetails.url}`
+        : "Added, got no notification details"
+    );
+  }, []);
 
-      setAddFrameResult(
-        result.notificationDetails
-          ? `Added, got notificaton token ${result.notificationDetails.token} and url ${result.notificationDetails.url}`
-          : "Added, got no notification details"
-      );
-    } catch (error) {
-      if (error instanceof AddFrame.RejectedByUser) {
-        setAddFrameResult(`Not added: ${error.message}`);
-      }
-
-      if (error instanceof AddFrame.InvalidDomainManifest) {
-        setAddFrameResult(`Not added: ${error.message}`);
-      }
-
+  const handleAddFrameError = useCallback((error: any) => {
+    if (error instanceof AddFrame.RejectedByUser) {
+      setAddFrameResult(`Not added: ${error.message}`);
+    } else if (error instanceof AddFrame.InvalidDomainManifest) {
+      setAddFrameResult(`Not added: ${error.message}`);
+    } else {
       setAddFrameResult(`Error: ${error}`);
     }
   }, []);
+
+  const addFrame = useCallback(async () => {
+    try {
+      const result = await sdk.actions.addFrame();
+      handleAddFrameResult(result);
+    } catch (error) {
+      handleAddFrameError(error);
+    }
+  }, [handleAddFrameResult, handleAddFrameError]);
 
   if (!isSDKLoaded) {
     return <div>Loading...</div>;
