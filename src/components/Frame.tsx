@@ -165,6 +165,23 @@ export default function Frame(
     return <div>Loading...</div>;
   }
 
+  const socialLinks = [
+    {
+      name: "Farcaster",
+      url: "https://warpcast.com/onsenbot",
+      icon: "🟣"
+    },
+    {
+      name: "GitHub",
+      url: "https://github.com/onsenbot",
+      icon: "🐙"
+    }
+  ];
+
+  const handleLinkClick = useCallback((url: string) => {
+    sdk.actions.openUrl(url);
+  }, []);
+
   return (
     <div
       style={{
@@ -176,6 +193,37 @@ export default function Frame(
     >
       <div className="w-[300px] mx-auto py-2 px-2">
         <h1 className="text-2xl font-bold text-center mb-4">{title}</h1>
+        
+        <div className="space-y-2">
+          {socialLinks.map((link, index) => (
+            <PurpleButton
+              key={index}
+              onClick={() => handleLinkClick(link.url)}
+              className="w-full flex items-center justify-between px-4 py-2"
+            >
+              <span>{link.icon} {link.name}</span>
+              <span>➔</span>
+            </PurpleButton>
+          ))}
+        </div>
+
+        {context?.client.recentLinks && context.client.recentLinks.length > 0 && (
+          <div className="mt-6">
+            <h2 className="text-lg font-semibold mb-2">Recent Links</h2>
+            <div className="space-y-2">
+              {context.client.recentLinks.map((link, index) => (
+                <PurpleButton
+                  key={index}
+                  onClick={() => handleLinkClick(link)}
+                  className="w-full flex items-center justify-between px-4 py-2"
+                >
+                  <span className="truncate">{link}</span>
+                  <span>➔</span>
+                </PurpleButton>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
