@@ -170,6 +170,10 @@ export default function Frame(
     return <div>Loading...</div>;
   }
 
+  const handleLinkClick = useCallback((url: string) => {
+    sdk.actions.openUrl(url);
+  }, []);
+
   const socialLinks = [
     {
       name: "Farcaster",
@@ -183,9 +187,6 @@ export default function Frame(
     }
   ];
 
-  const handleLinkClick = useCallback((url: string) => {
-    sdk.actions.openUrl(url);
-  }, []);
 
   return (
     <div
